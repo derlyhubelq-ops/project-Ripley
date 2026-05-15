@@ -8,5 +8,6 @@ public class Ripley {
   }
   public static void bienvenida(String nombre){
     System.out.println("Bienvenidos a ripley: "+ nombre);
+    System.out.println("hola mundo");
   }
 }
