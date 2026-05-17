@@ -1,5 +1,5 @@
 import java.util.Scanner;
-public class Ripley {
+public class Footloose {
   public static void main(String []args){
     Scanner escaner = new Scanner(System.in);
     System.out.println("----RIPLAY PERÚ ");
