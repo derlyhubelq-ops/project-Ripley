@@ -171,6 +171,7 @@ public class Footloose {
 
     public static void menuVaron() {
         System.out.println("------ PRODUCTOS VARON ------");
+        System.out.println("-------  ZAPATILLAS  ---------");
         System.out.println("1. R18 Hombres R18-Xw00245 | Gris | T41 | S/. 167.90 [Lleva 1 par y obtén 30% desc.]");
         System.out.println("2. Puma Caven III | Blanco total | T42 | S/. 229.00");
         System.out.println("3. Puma Transport | Negro/suela blanca | T41 | S/. 189.00");
@@ -181,6 +182,7 @@ public class Footloose {
         System.out.println("8. Puma Court Lally Metallic | Blanco | T40 | S/. 179.00");
         System.out.println("9. Puma Carina 3 | Negro | T42 | S/. 229.00");
         System.out.println("10. Skechers Bobs Arch | Negro | T41 | S/. 239.00");
+         System.out.println("-------  ZAPATOS  ---------");
         System.out.println("11. Renzo Renzini Rrz-Wo0001 | Marron oscuro | T41 | S/. 135.90 [Lleva 1 par y obtén 20% desc.]");
         System.out.println("12. Renzo Renzini Rrz-Cf00006 | Azul oscuro | T42 | S/. 249.90");
         System.out.println("13. Renzo Renzini Rrz-Cf00002 | Azul | T41 | S/. 249.90");
@@ -195,6 +197,7 @@ public class Footloose {
 
     public static void menuMujer() {
         System.out.println("------ PRODUCTOS MUJER ------");
+         System.out.println("-------  ZAPATILLAS  ---------");
         System.out.println("1. R18 Mujeres R18-Xw00245 | Gris | T37 | S/. 167.90 [Lleva 1 par y obtén 30% desc.]");
         System.out.println("2. Puma Caven III Wns | Blanco total | T38 | S/. 229.00");
         System.out.println("3. Puma Transport | Negro/suela blanca | T37 | S/. 189.00");
@@ -205,6 +208,7 @@ public class Footloose {
         System.out.println("8. Puma Court Lally Metallic | Blanco | T36 | S/. 179.00");
         System.out.println("9. Puma Carina 3 | Negro | T38 | S/. 229.00");
         System.out.println("10. Skechers Bobs Arch | Negro | T37 | S/. 239.00");
+         System.out.println("-------  ZAPATOS  ---------");
         System.out.println("11. Top Model Tmo-N0013 | Negro | T36 | S/. 109.90 [Lleva 1 par y obtén 50% desc.]");
         System.out.println("12. Vizzano 6428.101.7286 | Nude | T37 | S/. 139.90");
         System.out.println("13. Footloose Ftl-Yz00077 | Negro | T38 | S/. 99.90");
