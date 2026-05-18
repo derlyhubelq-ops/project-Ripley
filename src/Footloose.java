@@ -1,31 +1,42 @@
 import java.util.Scanner;
 public class Footloose {
+    public static String usuarioRegistrado = "juan";
+    public static String claveRegistrada = "1234";
     public static void main(String[] args) {
         Scanner escaner = new Scanner(System.in);
         String nombreAcceso = "";
         boolean acceso = false;
-
         while (!acceso) {
             menuInicio();
             int opcionInicio = escaner.nextInt();
             escaner.nextLine();
             if (opcionInicio == 1) {
                 System.out.println("----- INICIAR SESION -----");
-                System.out.println("Ingrese su nombre:");
-                nombreAcceso = escaner.nextLine();
-                bienvenida(nombreAcceso);
-                acceso = true;
+                System.out.println("Ingrese su nombre de usuario:");
+                String usuarioIntento = escaner.nextLine();
+                System.out.println("Ingrese su contraseña:");
+                String claveIntento = escaner.nextLine();
+
+                if (usuarioIntento.equals(usuarioRegistrado) && claveIntento.equals(claveRegistrada)) {
+                    nombreAcceso = usuarioIntento;
+                    bienvenida(nombreAcceso);
+                    acceso = true;
+                } else {
+                    System.out.println("Usuario o contraseña incorrectos. Intente de nuevo.");
+                }
+
             } else if (opcionInicio == 2) {
                 System.out.println("----- REGISTRO -----");
-                System.out.println("Ingrese su nombre:");
-                nombreAcceso = escaner.nextLine();
+                System.out.println("Ingrese su nombre de usuario para el sistema:");
+                usuarioRegistrado = escaner.nextLine();
                 System.out.println("Ingrese su correo:");
                 String correoRegistro = escaner.nextLine();
                 System.out.println("Ingrese su contraseña:");
-                String clave = escaner.nextLine();
-                System.out.println("Registro exitoso");
-                bienvenida(nombreAcceso);
-                acceso = true;
+                claveRegistrada = escaner.nextLine();
+
+                System.out.println("\n[!] Registro exitoso. Volviendo al menu de inicio...");
+                System.out.println("-------------------------------------------------\n");
+
             } else if (opcionInicio == 3) {
                 nombreAcceso = "Invitado";
                 bienvenida(nombreAcceso);
@@ -37,13 +48,11 @@ public class Footloose {
                 System.out.println("Opcion no valida");
             }
         }
-
         boolean compraFinalizada = false;
         while (!compraFinalizada) {
             menuPrincipal();
             int opcionGenero = escaner.nextInt();
             escaner.nextLine();
-
             double total_pagar = 0;
             String producto = "";
             int cantidad = 0;
@@ -82,14 +91,13 @@ public class Footloose {
             System.out.println("Ingrese su correo:");
             String correo = escaner.nextLine();
             System.out.println("Ingrese su nombre:");
-            String nombre = escaner.nextLine();
+           String nombre = escaner.nextLine();
             System.out.println("Ingrese su apellido:");
             String apellido = escaner.nextLine();
             System.out.println("Ingrese su DNI:");
-            String dni = escaner.nextLine();
+        String dni = escaner.nextLine();
             System.out.println("Ingrese su telefono:");
             String telefono = escaner.nextLine();
-
             metodoEntrega();
             int opcionEntrega = escaner.nextInt();
             escaner.nextLine();
@@ -109,7 +117,6 @@ public class Footloose {
                 System.out.println("Opcion no valida");
                 continue;
             }
-
             metodoPago();
             int opcionPago = escaner.nextInt();
             escaner.nextLine();
@@ -123,27 +130,31 @@ public class Footloose {
                 continue;
             }
 
-            System.out.println("El total a pagar es: " + total_pagar);
-            System.out.println("Ingrese el monto pagado:");
-            double montoPagado = escaner.nextDouble();
-            escaner.nextLine();
+            double montoPagado = 0;
+            boolean pagoCorrecto = false;
 
-            if (montoPagado < total_pagar) {
-                System.out.println("Monto insuficiente, regresa al menu principal");
-                continue;
+            while (!pagoCorrecto) {
+                System.out.println("El total a pagar es: S/. " + total_pagar);
+                System.out.println("Ingrese el monto pagado:");
+                montoPagado = escaner.nextDouble();
+                escaner.nextLine();
+
+                if (montoPagado < total_pagar) {
+                    System.out.println("Monto insuficiente. Por favor, intente de nuevo.");
+                } else {
+                    pagoCorrecto = true;
+                }
             }
 
             generarBoleta(nombre, apellido, correo, dni, telefono, producto, entrega, pago, total_pagar, montoPagado, cantidad);
             compraFinalizada = true;
         }
-
         escaner.close();
     }
 
     public static void bienvenida(String nombre) {
         System.out.println("Bienvenido a Footloose: " + nombre);
     }
-
     public static void menuInicio() {
         System.out.println("------ FOOTLOOSE ------");
         System.out.println("1. Iniciar sesion");
@@ -362,7 +373,6 @@ public class Footloose {
                 descuento = "50% por compra de 2 pares";
             }
         }
-
         System.out.println("=================== BOLETA DE VENTA ===================");
         System.out.println("Empresa: FOOTLOOSE S.A.");
         System.out.println("RUC: 20123456789");
