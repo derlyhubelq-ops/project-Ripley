@@ -1,6 +1,9 @@
 import java.util.Scanner;
+import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
-public class Footloose {
+public class Footloosee {
 
     public static void main(String[] args) {
         Scanner escaner = new Scanner(System.in);
@@ -9,7 +12,7 @@ public class Footloose {
         while (programaCorriendo) {
             mostrarBienvenida();
             int opcionAcceso = escaner.nextInt();
-            escaner.nextLine(); 
+            escaner.nextLine();
 
             if (opcionAcceso == 4) {
                 System.out.println("Gracias por visitar Footloose. Hasta luego!");
@@ -30,7 +33,7 @@ public class Footloose {
             while (irAlMenuPrincipal) {
                 mostrarMenuPrincipal();
                 int opcionGenero = escaner.nextInt();
-                escaner.nextLine(); 
+                escaner.nextLine();
 
                 if (opcionGenero == 3) {
                     irAlMenuPrincipal = false;
@@ -42,29 +45,59 @@ public class Footloose {
                     continue;
                 }
 
-                String[] datosProducto = seleccionarProducto(opcionGenero, escaner);
-                if (datosProducto == null) continue;
+                int prod = 0;
+                if (opcionGenero == 1) {
+                    menuVaron();
+                    System.out.println("Elija el numero de producto (1-20): ");
+                    prod = escaner.nextInt();
+                    escaner.nextLine();
+                } else {
+                    menuMujer();
+                    System.out.println("Elija el numero de producto (1-20): ");
+                    prod = escaner.nextInt();
+                    escaner.nextLine();
+                }
 
-                String productoSeleccionado = datosProducto[0];
-                String colorSeleccionado    = datosProducto[1];
-                int tallaSeleccionada       = Integer.parseInt(datosProducto[2]);
-                double precioSeleccionado   = Double.parseDouble(datosProducto[3]);
-                String tieneDescuento       = datosProducto[4]; 
+                if (prod < 1 || prod > 20) {
+                    System.out.println("Producto no existente.");
+                    continue;
+                }
+
+
+                String productoSeleccionado = "";
+                String colorSeleccionado = "";
+                int tallaSeleccionada = 0;
+
+                if (opcionGenero == 1) {
+                    productoSeleccionado = obtenerProductoVaron(prod);
+                    colorSeleccionado = obtenerColorVaron(prod);
+                    tallaSeleccionada = obtenerTallaVaron(prod);
+                } else {
+                    productoSeleccionado = obtenerProductoMujer(prod);
+                    colorSeleccionado = obtenerColorMujer(prod);
+                    tallaSeleccionada = obtenerTallaMujer(prod);
+                }
 
                 int cantidadPares = pedirCantidad(escaner);
-                
-                double totalAPagar = calcularMontoTotal(precioSeleccionado, cantidadPares, tieneDescuento);
+
+                double totalAPagar = 0;
+                if (opcionGenero == 1) {
+                    totalAPagar = calcularTotalVaron(prod, cantidadPares);
+                } else {
+                    totalAPagar = calcularTotalMujer(prod, cantidadPares);
+                }
+
                 System.out.println("Total a pagar: S/. " + totalAPagar);
 
                 String[] datosCliente = registrarDatosCliente(escaner);
                 if (datosCliente == null) {
-                    continue; 
+                    continue;
                 }
 
                 String tiendaRecojo = seleccionarTienda(escaner);
 
                 String metodoPagoTexto = procesarFlujoPago(totalAPagar, escaner);
-                
+
                 if (metodoPagoTexto.isEmpty()) {
                     continue;
                 }
@@ -104,11 +137,7 @@ public class Footloose {
     }
 
     public static boolean verificarAccesoUsuario(int opcionAcceso, Scanner escaner) {
-        boolean accesoOk = procesarAcceso(opcionAcceso, escaner);
-        if (!accesoOk) {
-            return false;
-        }
-        return true;
+        return procesarAcceso(opcionAcceso, escaner);
     }
 
     public static boolean iniciarSesion(Scanner escaner) {
@@ -129,9 +158,9 @@ public class Footloose {
     public static void registrarse(Scanner escaner) {
         System.out.println("--- REGISTRARSE ---");
         System.out.println("Cree su correo de usuario: ");
-        String correo = escaner.nextLine(); 
+        String correo = escaner.nextLine();
         System.out.println("Cree su contrasena: ");
-        String pass = escaner.nextLine();   
+        String pass = escaner.nextLine();
         System.out.println("Registro completado con exito! Ahora puede iniciar sesion.");
     }
 
@@ -145,95 +174,236 @@ public class Footloose {
         System.out.println("Seleccione el genero que desea explorar: ");
     }
 
-    public static String[] seleccionarProducto(int genero, Scanner escaner) {
-        if (genero == 1) {
-            return mostrarCatalogoVaron(escaner);
-        } else {
-            return mostrarCatalogoMujer(escaner);
+    public static void menuVaron() {
+        System.out.println("------ PRODUCTOS VARON ------");
+        System.out.println("-------  ZAPATILLAS  ---------");
+        System.out.println("1. R18 Hombres R18-Xw00245 | Gris | T41 | S/. 167.90 [Lleva 2 y obtén 30% desc.]");
+        System.out.println("2. Puma Caven III | Blanco total | T42 | S/. 229.00");
+        System.out.println("3. Puma Transport | Negro/suela blanca | T41 | S/. 189.00");
+        System.out.println("4. Puma Jada Classic Sd | Beige | T40 | S/. 199.00");
+        System.out.println("5. Puma Blaze Lite Nbk | Negro | T42 | S/. 199.00");
+        System.out.println("6. Skechers Bobs Squad 4 | Blanco | T41 | S/. 279.00");
+        System.out.println("7. Skechers Uno Savvy | Blanco | T42 | S/. 249.00");
+        System.out.println("8. Puma Court Lally Metallic | Blanco | T40 | S/. 179.00");
+        System.out.println("9. Puma Carina 3 | Negro | T42 | S/. 229.00");
+        System.out.println("10. Skechers Bobs Arch | Negro | T41 | S/. 239.00");
+        System.out.println("-------  ZAPATOS  ---------");
+        System.out.println("11. Renzo Renzini Rrz-Wo0001 | Marron oscuro | T41 | S/. 135.90 [Lleva 2 y obtén 20% desc.]");
+        System.out.println("12. Renzo Renzini Rrz-Cf00006 | Azul oscuro | T42 | S/. 249.90");
+        System.out.println("13. Renzo Renzini Rrz-Cf00002 | Azul | T41 | S/. 249.90");
+        System.out.println("14. Renzo Renzini Rrz-Cf00004 | Marron | T43 | S/. 249.90");
+        System.out.println("15. Renzo Renzini Rrz-Fv00003 | Chocolate | T42 | S/. 249.90");
+        System.out.println("16. Renzo Renzini Rrz-Jl00002 | Negro | T41 | S/. 249.90");
+        System.out.println("17. Renzo Renzini Rrz-Lk00001 | Camel | T42 | S/. 249.90");
+        System.out.println("18. Renzo Renzini Rrz-Cc00004 | Marron oscuro | T43 | S/. 229.90");
+        System.out.println("19. Renzo Renzini Rfv-002 | Marron claro | T42 | S/. 239.90");
+        System.out.println("20. Renzo Renzini Rrz-Jq00004 | Azul oscuro | T41 | S/. 199.90");
+    }
+
+    public static void menuMujer() {
+        System.out.println("------ PRODUCTOS MUJER ------");
+        System.out.println("-------  ZAPATILLAS  ---------");
+        System.out.println("1. R18 Mujeres R18-Xw00245 | Gris | T37 | S/. 167.90 [Lleva 2  y obtén 30% desc.]");
+        System.out.println("2. Puma Caven III Wns | Blanco total | T38 | S/. 229.00");
+        System.out.println("3. Puma Transport | Negro/suela blanca | T37 | S/. 189.00");
+        System.out.println("4. Puma Jada Classic Sd | Beige | T36 | S/. 199.00");
+        System.out.println("5. Puma Blaze Lite Nbk Wns | Negro | T38 | S/. 199.00");
+        System.out.println("6. Skechers Bobs Squad 4 | Blanco | T37 | S/. 279.00");
+        System.out.println("7. Skechers Uno Savvy | Blanco | T38 | S/. 249.00");
+        System.out.println("8. Puma Court Lally Metallic | Blanco | T36 | S/. 179.00");
+        System.out.println("9. Puma Carina 3 | Negro | T38 | S/. 229.00");
+        System.out.println("10. Skechers Bobs Arch | Negro | T37 | S/. 239.00");
+        System.out.println("-------  ZAPATOS  ---------");
+        System.out.println("11. Top Model Tmo-N0013 | Negro | T36 | S/. 109.90 [Lleva 2 y obtén 50% desc.]");
+        System.out.println("12. Vizzano 6428.101.7286 | Nude | T37 | S/. 139.90");
+        System.out.println("13. Footloose Ftl-Yz00077 | Negro | T38 | S/. 99.90");
+        System.out.println("14. Footloose Ftl-Yq00007 | Negro gamuza | T36 | S/. 79.90");
+        System.out.println("15. Footloose Ftl-I0025 | Dorado | T37 | S/. 69.90");
+        System.out.println("16. Footloose Ftl-Yz00078 | Negro track | T38 | S/. 149.90");
+        System.out.println("17. Footloose Ftl-Yq00008 | Animal print | T36 | S/. 69.90");
+        System.out.println("18. Footloose Ftl-Rs00015 | Negro textura | T37 | S/. 129.90");
+        System.out.println("19. Footloose Ftl-I0041 | Nude oscuro | T38 | S/. 99.00");
+        System.out.println("20. Footloose Ftl-I0026 | Crema | T36 | S/. 79.90");
+    }
+
+    public static String obtenerProductoVaron(int opcion) {
+        switch (opcion) {
+            case 1: return "R18 Hombres R18-Xw00245";
+            case 2: return "Puma Caven III";
+            case 3: return "Puma Transport";
+            case 4: return "Puma Jada Classic Sd";
+            case 5: return "Puma Blaze Lite Nbk";
+            case 6: return "Skechers Bobs Squad 4";
+            case 7: return "Skechers Uno Savvy";
+            case 8: return "Puma Court Lally Metallic";
+            case 9: return "Puma Carina 3";
+            case 10: return "Skechers Bobs Arch";
+            case 11: return "Renzo Renzini Rrz-Wo0001";
+            case 12: return "Renzo Renzini Rrz-Cf00006";
+            case 13: return "Renzo Renzini Rrz-Cf00002";
+            case 14: return "Renzo Renzini Rrz-Cf00004";
+            case 15: return "Renzo Renzini Rrz-Fv00003";
+            case 16: return "Renzo Renzini Rrz-Jl00002";
+            case 17: return "Renzo Renzini Rrz-Lk00001";
+            case 18: return "Renzo Renzini Rrz-Cc00004";
+            case 19: return "Renzo Renzini Rfv-002";
+            case 20: return "Renzo Renzini Rrz-Jq00004";
+            default: return "";
         }
     }
 
-    public static String[] mostrarCatalogoVaron(Scanner escaner) {
-        System.out.println("--- CATALOGO DE VARON (TALLAS UNICAS) ---");
-        System.out.println("1.  Zapatilla Adidas R18        | Color: Azul       | Talla: 41 | Precio: S/. 189.90");
-        System.out.println("2.  Zapatilla Puma Street       | Color: Negro      | Talla: 41 | Precio: S/. 159.90");
-        System.out.println("3.  Zapatilla Nike Runner       | Color: Anaranjado | Talla: 41 | Precio: S/. 219.90");
-        System.out.println("4.  Zapatilla Footloose Urban   | Color: Beige      | Talla: 41 | Precio: S/. 129.90");
-        System.out.println("5.  Zapato Casual Cat           | Color: Marron     | Talla: 42 | Precio: S/. 249.90");
-        System.out.println("6.  Zapato Casual Calimod       | Color: Negro      | Talla: 42 | Precio: S/. 179.90");
-        System.out.println("7.  Zapato Casual Footloose     | Color: Azul       | Talla: 42 | Precio: S/. 139.90");
-        System.out.println("8.  Zapatilla R18 Sport         | Color: Varios     | Talla: 41 | Precio: S/. 149.90");
-        System.out.println("9.  Zapato Casual Bruno Ferrini | Color: Beige      | Talla: 42 | Precio: S/. 299.90");
-        System.out.println("10. Zapatilla Stand Urban       | Color: Blanco     | Talla: 41 | Precio: S/. 119.90");
-        System.out.println("11. [PROMO] Botas Timberland    | Color: Camel      | Talla: 42 | Precio: S/. 349.90 (15% DSCTO COMPRANDO 1 PAR)");
-        System.out.println("Elija el numero de producto (1-11): ");
-        int prod = escaner.nextInt();
-        escaner.nextLine(); 
-
-        switch (prod) {
-            case 1:  return new String[]{"Zapatilla Adidas R18",        "Azul",        "41", "189.90", "NO"};
-            case 2:  return new String[]{"Zapatilla Puma Street",       "Negro",       "41", "159.90", "NO"};
-            case 3:  return new String[]{"Zapatilla Nike Runner",       "Anaranjado",  "41", "219.90", "NO"};
-            case 4:  return new String[]{"Zapatilla Footloose Urban",   "Beige",       "41", "129.90", "NO"};
-            case 5:  return new String[]{"Zapato Casual Cat",           "Marron",      "42", "249.90", "NO"};
-            case 6:  return new String[]{"Zapato Casual Calimod",       "Negro",       "42", "179.90", "NO"};
-            case 7:  return new String[]{"Zapato Casual Footloose",     "Azul",        "42", "139.90", "NO"};
-            case 8:  return new String[]{"Zapatilla R18 Sport",         "Varios",      "42", "149.90", "NO"};
-            case 9:  return new String[]{"Zapato Casual Bruno Ferrini", "Beige",       "42", "299.90", "NO"};
-            case 10: return new String[]{"Zapatilla Stand Urban",       "Blanco",      "41", "119.90", "NO"};
-            case 11: return new String[]{"Botas Timberland",            "Camel",       "42", "349.90", "SI"};
-            default: System.out.println("Producto no existente."); return null;
+    public static String obtenerProductoMujer(int opcion) {
+        switch (opcion) {
+            case 1: return "R18 Mujeres R18-Xw00245";
+            case 2: return "Puma Caven III Wns";
+            case 3: return "Puma Transport";
+            case 4: return "Puma Jada Classic Sd";
+            case 5: return "Puma Blaze Lite Nbk Wns";
+            case 6: return "Skechers Bobs Squad 4";
+            case 7: return "Skechers Uno Savvy";
+            case 8: return "Puma Court Lally Metallic";
+            case 9: return "Puma Carina 3";
+            case 10: return "Skechers Bobs Arch";
+            case 11: return "Top Model Tmo-N0013";
+            case 12: return "Vizzano 6428.101.7286";
+            case 13: return "Footloose Ftl-Yz00077";
+            case 14: return "Footloose Ftl-Yq00007";
+            case 15: return "Footloose Ftl-I0025";
+            case 16: return "Footloose Ftl-Yz00078";
+            case 17: return "Footloose Ftl-Yq00008";
+            case 18: return "Footloose Ftl-Rs00015";
+            case 19: return "Footloose Ftl-I0041";
+            case 20: return "Footloose Ftl-I0026";
+            default: return "";
         }
     }
 
-    public static String[] mostrarCatalogoMujer(Scanner escaner) {
-        System.out.println("--- CATALOGO DE MUJER (TALLAS UNICAS) ---");
-        System.out.println("1.  Zapatilla Adidas R18       | Color: Trans-Blanco | Talla: 37 | Precio: S/. 179.90");
-        System.out.println("2.  Zapatilla Puma Nova        | Color: Anaranjado   | Talla: 37 | Precio: S/. 169.90");
-        System.out.println("3.  Zapatilla Footloose Active | Color: Azul         | Talla: 37 | Precio: S/. 129.90");
-        System.out.println("4.  Zapatilla R18 Street       | Color: Varios       | Talla: 37 | Precio: S/. 139.90");
-        System.out.println("5.  Zapato Casual Vizzano      | Color: Beige        | Talla: 38 | Precio: S/. 159.90");
-        System.out.println("6.  Zapato Casual Moleca       | Color: Negro        | Talla: 38 | Precio: S/.  99.90");
-        System.out.println("7.  Zapato Casual Footloose    | Color: Marron       | Talla: 38 | Precio: S/. 119.90");
-        System.out.println("8.  Zapatilla Nike Air         | Color: Blanco       | Talla: 37 | Precio: S/. 259.90");
-        System.out.println("9.  Zapato Casual Beira Rio    | Color: Azul         | Talla: 38 | Precio: S/. 109.90");
-        System.out.println("10. Zapato Casual Lady         | Color: Beige        | Talla: 38 | Precio: S/. 149.90");
-        System.out.println("11. [PROMO] Tacones Gacela     | Color: Rojo         | Talla: 36 | Precio: S/. 199.90 (15% DSCTO COMPRANDO 1 PAR)");
-        System.out.println("Elija el numero de producto (1-11): ");
-        int prod = escaner.nextInt();
-        escaner.nextLine(); 
-
-        switch (prod) {
-            case 1:  return new String[]{"Zapatilla Adidas R18",       "Trans-Blanco", "37", "179.90", "NO"};
-            case 2:  return new String[]{"Zapatilla Puma Nova",        "Anaranjado",   "37", "169.90", "NO"};
-            case 3:  return new String[]{"Zapatilla Footloose Active", "Azul",         "37", "129.90", "NO"};
-            case 4:  return new String[]{"Zapatilla R18 Street",       "Varios",       "37", "139.90", "NO"};
-            case 5:  return new String[]{"Zapato Casual Vizzano",      "Beige",        "38", "159.90", "NO"};
-            case 6:  return new String[]{"Zapato Casual Moleca",       "Negro",        "38",  "99.90", "NO"};
-            case 7:  return new String[]{"Zapato Casual Footloose",    "Marron",       "38", "119.90", "NO"};
-            case 8:  return new String[]{"Zapatilla Nike Air",         "Blanco",       "37", "259.90", "NO"};
-            case 9:  return new String[]{"Zapato Casual Beira Rio",    "Azul",         "38", "109.90", "NO"};
-            case 10: return new String[]{"Zapato Casual Lady",         "Beige",        "38", "149.90", "NO"};
-            case 11: return new String[]{"Tacones Gacela",             "Rojo",         "36", "199.90", "SI"};
-            default: System.out.println("Producto no existente."); return null;
+    public static String obtenerColorVaron(int opcion) {
+        switch (opcion) {
+            case 1: return "Gris"; case 2: return "Blanco total"; case 3: return "Negro/suela blanca";
+            case 4: return "Beige"; case 5: return "Negro"; case 6: return "Blanco";
+            case 7: return "Blanco"; case 8: return "Blanco"; case 9: return "Negro";
+            case 10: return "Negro"; case 11: return "Marron oscuro"; case 12: return "Azul oscuro";
+            case 13: return "Azul"; case 14: return "Marron"; case 15: return "Chocolate";
+            case 16: return "Negro"; case 17: return "Camel"; case 18: return "Marron oscuro";
+            case 19: return "Marron claro"; case 20: return "Azul oscuro"; default: return "";
         }
+    }
+
+    public static int obtenerTallaVaron(int opcion) {
+        switch (opcion) {
+            case 1: case 3: case 6: case 10: case 11: case 13: case 16: case 20: return 41;
+            case 2: case 5: case 7: case 9: case 12: case 15: case 17: case 19: return 42;
+            case 4: case 8: return 40;
+            case 14: case 18: return 43;
+            default: return 0;
+        }
+    }
+
+    public static String obtenerColorMujer(int opcion) {
+        switch (opcion) {
+            case 1: return "Gris"; case 2: return "Blanco total"; case 3: return "Negro/suela blanca";
+            case 4: return "Beige"; case 5: return "Negro"; case 6: return "Blanco";
+            case 7: return "Blanco"; case 8: return "Blanco"; case 9: return "Negro";
+            case 10: return "Negro"; case 11: return "Negro"; case 12: return "Nude";
+            case 13: return "Negro"; case 14: return "Negro gamuza"; case 15: return "Dorado";
+            case 16: return "Negro track"; case 17: return "Animal print"; case 18: return "Negro textura";
+            case 19: return "Nude oscuro"; case 20: return "Crema"; default: return "";
+        }
+    }
+
+    public static int obtenerTallaMujer(int opcion) {
+        switch (opcion) {
+            case 1: case 3: case 6: case 10: case 12: case 15: case 18: return 37;
+            case 2: case 5: case 7: case 9: case 13: case 16: case 19: return 38;
+            case 4: case 8: case 11: case 14: case 17: case 20: return 36;
+            default: return 0;
+        }
+    }
+
+    public static double calcularTotalVaron(int opcion, int cantidad) {
+        if (cantidad <= 0) return 0;
+        double total = 0;
+        switch (opcion) {
+            case 1:
+                if (cantidad == 1) {
+                    total = (167.90 * cantidad) * 0.70;
+                    System.out.println("[PROMO] Se aplicó un 30% de descuento por la comprar de 2 dos pares.");
+                } else total = 167.90 * cantidad;
+                break;
+            case 2: total = 229.00 * cantidad; break;
+            case 3: total = 189.00 * cantidad; break;
+            case 4: total = 199.00 * cantidad; break;
+            case 5: total = 199.00 * cantidad; break;
+            case 6: total = 279.00 * cantidad; break;
+            case 7: total = 249.00 * cantidad; break;
+            case 8: total = 179.00 * cantidad; break;
+            case 9: total = 229.00 * cantidad; break;
+            case 10: total = 239.00 * cantidad; break;
+            case 11:
+                if (cantidad == 1) {
+                    total = (135.90 * cantidad) * 0.80;
+                    System.out.println("[PROMO] Se aplicó un 20% de descuento por la comprar de 2 pares.");
+                } else total = 135.90 * cantidad;
+                break;
+            case 12: total = 249.90 * cantidad; break;
+            case 13: total = 249.90 * cantidad; break;
+            case 14: total = 249.90 * cantidad; break;
+            case 15: total = 249.90 * cantidad; break;
+            case 16: total = 249.90 * cantidad; break;
+            case 17: total = 249.90 * cantidad; break;
+            case 18: total = 229.90 * cantidad; break;
+            case 19: total = 239.90 * cantidad; break;
+            case 20: total = 199.90 * cantidad; break;
+            default: total = 0;
+        }
+        return total;
+    }
+
+    public static double calcularTotalMujer(int opcion, int cantidad) {
+        if (cantidad <= 0) return 0;
+        double total = 0;
+        switch (opcion) {
+            case 1:
+                if (cantidad == 1) {
+                    total = (167.90 * cantidad) * 0.70;
+                    System.out.println("[PROMO] Se aplicó un 30% de descuento por la comprar 2  pares.");
+                } else total = 167.90 * cantidad;
+                break;
+            case 2: total = 229.00 * cantidad; break;
+            case 3: total = 189.00 * cantidad; break;
+            case 4: total = 199.00 * cantidad; break;
+            case 5: total = 199.00 * cantidad; break;
+            case 6: total = 279.00 * cantidad; break;
+            case 7: total = 249.00 * cantidad; break;
+            case 8: total = 179.00 * cantidad; break;
+            case 9: total = 229.00 * cantidad; break;
+            case 10: total = 239.00 * cantidad; break;
+            case 11:
+                if (cantidad == 1) {
+                    total = (109.90 * cantidad) * 0.50;
+                    System.out.println("[PROMO] Se aplicó un 50% de descuento por la comprar de 2 pares.");
+                } else total = 109.90 * cantidad;
+                break;
+            case 12: total = 139.90 * cantidad; break;
+            case 13: total = 99.90 * cantidad; break;
+            case 14: total = 79.90 * cantidad; break;
+            case 15: total = 69.90 * cantidad; break;
+            case 16: total = 149.90 * cantidad; break;
+            case 17: total = 69.90 * cantidad; break;
+            case 18: total = 129.90 * cantidad; break;
+            case 19: total = 99.00 * cantidad; break;
+            case 20: total = 79.90 * cantidad; break;
+            default: total = 0;
+        }
+        return total;
     }
 
     public static int pedirCantidad(Scanner escaner) {
         System.out.println("Ingrese la cantidad de pares que desea llevar: ");
         int cantidad = escaner.nextInt();
-        escaner.nextLine(); 
+        escaner.nextLine();
         return cantidad;
-    }
-
-    public static double calcularMontoTotal(double precio, int cantidad, String tienePromo) {
-        double subtotalCalculado = precio * cantidad;
-        if (tienePromo.equals("SI") && cantidad == 1) {
-            double rebaja = subtotalCalculado * 0.15; 
-            subtotalCalculado = subtotalCalculado - rebaja;
-            System.out.println("[PROMO] ¡Se aplico un 15% de descuento por la compra de 1 par!");
-        }
-        return subtotalCalculado;
     }
 
     public static String[] registrarDatosCliente(Scanner escaner) {
@@ -246,25 +416,25 @@ public class Footloose {
         String nombre = escaner.nextLine();
         System.out.println("Apellido: ");
         String apellido = escaner.nextLine();
-        
+
         String dni = "";
         boolean dniValido = false;
         while (!dniValido) {
             System.out.println("Documento DNI (Debe tener 8 digitos) o presione '0' para regresar al menu: ");
             dni = escaner.nextLine();
-            
+
             if (dni.equals("0")) {
-                System.out.println("\n[!] Registro cancelado. Volviendo al menu...\n");
-                return null; 
+                System.out.println("[!] Registro cancelado. Volviendo al menu...");
+                return null;
             }
-            
+
             if (dni.length() == 8) {
                 dniValido = true;
             } else {
                 System.out.println("[ERROR] El DNI ingresado no es valido. Intente nuevamente.");
             }
         }
-        
+
         System.out.println("Telefono: ");
         String telefono = escaner.nextLine();
         return new String[]{correo, nombre, apellido, dni, telefono};
@@ -279,7 +449,7 @@ public class Footloose {
         System.out.println("5. Tienda Plaza Norte (Independencia - Lima)");
         System.out.println("Seleccione una tienda (1-5): ");
         int opcion = escaner.nextInt();
-        escaner.nextLine(); 
+        escaner.nextLine();
         switch (opcion) {
             case 1: return "Tienda Real Plaza Juliaca (Puno)";
             case 2: return "Tienda Jiron Huancane (Juliaca - Puno)";
@@ -296,10 +466,10 @@ public class Footloose {
         System.out.println("2. En Efectivo");
         System.out.println("Seleccione su metodo de pago: ");
         int metodo = escaner.nextInt();
-        escaner.nextLine(); 
+        escaner.nextLine();
 
         if (metodo == 1) {
-            if (pagarConTarjeta(escaner)) {
+            if (validaPagoTarjeta(escaner, total)) {
                 return "Tarjeta de Credito";
             }
         } else if (metodo == 2) {
@@ -309,21 +479,52 @@ public class Footloose {
         } else {
             System.out.println("Metodo de pago invalido. Operacion cancelada.");
         }
-        return ""; 
+        return "";
     }
 
-    public static boolean pagarConTarjeta(Scanner escaner) {
+    public static boolean validaPagoTarjeta(Scanner escaner, double total) {
         System.out.println("--- PASARELA DE TARJETA ---");
+        System.out.println("Monto a procesar: S/. " + total);
+
         System.out.println("Ingrese el numero de tarjeta (16 digitos): ");
-        escaner.nextLine();
-        System.out.println("Ingrese fecha de vencimiento (MM/AA): ");
-        escaner.nextLine();
-        System.out.println("Ingrese codigo de seguridad CVV: ");
-        escaner.nextLine();
+        String nroTarjeta = escaner.nextLine();
+
+        System.out.println("Ingrese fecha de vencimiento (MM/yy): ");
+        String fechaVencimiento = escaner.nextLine();
+
+        System.out.println("Ingrese codigo de seguridad CVV (3 digitos): ");
+        String cvv = escaner.nextLine();
+
         System.out.println("Ingrese nombre completo del titular: ");
-        escaner.nextLine();
-        System.out.println("Procesando pago con tarjeta... Autorizado exitosamente!");
-        return true;
+        String titular = escaner.nextLine();
+
+        boolean tarjetaOk = (nroTarjeta.length() == 16);
+        boolean cvvOk = (cvv.length() == 3);
+        boolean fechaEstructuraOk = (fechaVencimiento.length() == 5 && fechaVencimiento.contains("/"));
+        boolean fechaNoVencida = false;
+
+        if (fechaEstructuraOk) {
+            try {
+                DateTimeFormatter formateador = DateTimeFormatter.ofPattern("MM/yy");
+                YearMonth fechaTarjeta = YearMonth.parse(fechaVencimiento, formateador);
+                YearMonth fechaActual = YearMonth.now();
+
+                if (fechaTarjeta.isAfter(fechaActual) || fechaTarjeta.equals(fechaActual)) {
+                    fechaNoVencida = true;
+                }
+            } catch (DateTimeParseException e) {
+                System.out.println("[ERROR] Error en el formato de la fecha.");
+            }
+        }
+
+        if (tarjetaOk && cvvOk && fechaNoVencida) {
+            System.out.println("Procesando pago con tarjeta... ¡Autorizado exitosamente!");
+            return true;
+        } else {
+            System.out.println("[ERROR] Datos de tarjeta invalidos o tarjeta vencida.");
+            System.out.println("Cancelando transaccion y regresando al Menu Principal...");
+            return false;
+        }
     }
 
     public static boolean pagarEnEfectivo(double totalAPagar, Scanner escaner) {
@@ -331,11 +532,11 @@ public class Footloose {
         System.out.println("Monto requerido: S/. " + totalAPagar);
         System.out.println("Ingrese la cantidad de dinero con la que va a pagar: S/. ");
         double efectivo = escaner.nextDouble();
-        escaner.nextLine(); 
-        
+        escaner.nextLine();
+
         if (efectivo < totalAPagar) {
             System.out.println("[ERROR] El dinero ingresado es insuficiente.");
-            System.out.println("Cancelando transaccion y regresando al Menu Principal...\n");
+            System.out.println("Cancelando transaccion y regresando al Menu Principal...");
             return false;
         } else {
             double vuelto = efectivo - totalAPagar;
@@ -353,7 +554,7 @@ public class Footloose {
         String dni      = datosCliente[3];
         String telefono = datosCliente[4];
 
-        double igv      = total * 0.18;
+        double igv = total * 0.18;
         double subtotal = total - igv;
 
         System.out.println("==================================================");
