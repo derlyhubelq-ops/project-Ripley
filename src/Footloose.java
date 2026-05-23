@@ -562,7 +562,7 @@ public class Footloosee {
         System.out.println("          COMERCIAL FOOTLOOSE PERU S.A.C.         ");
         System.out.println("                RUC: 20511378491                  ");
         System.out.println("==================================================");
-        System.out.println("CLIENTE: " + nombre.toUpperCase() + " " + apellido.toUpperCase());
+        System.out.println("CLIENTE: " + nombre + " " + apellido);
         System.out.println("DNI: " + dni + "     TELEFONO: " + telefono);
         System.out.println("CORREO: " + correo);
         System.out.println("--------------------------------------------------");
