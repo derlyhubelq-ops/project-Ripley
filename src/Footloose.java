@@ -63,7 +63,6 @@ public class Footloosee {
                     continue;
                 }
 
-
                 String productoSeleccionado = "";
                 String colorSeleccionado = "";
                 int tallaSeleccionada = 0;
@@ -89,9 +88,65 @@ public class Footloosee {
 
                 System.out.println("Total a pagar: S/. " + totalAPagar);
 
-                String[] datosCliente = registrarDatosCliente(escaner);
-                if (datosCliente == null) {
+                
+                System.out.println("------------------------------------------");
+                System.out.println("       REGISTRO DE DATOS DE CLIENTE       ");
+                System.out.println("------------------------------------------");
+                
+                String correoCliente = "";
+                boolean correoValido = false;
+                while (!correoValido) {
+                    System.out.println("Correo electronico (Debe contener '@' y '.com'): ");
+                    correoCliente = escaner.nextLine();
+                    boolean correoOk = correoCliente.contains("@") && correoCliente.contains(".com");
+
+                    if (correoOk) {
+                        correoValido = true;
+                    } else {
+                        System.out.println("[ERROR] Formato de correo invalido. Intente nuevamente.");
+                    }
+                }
+
+                System.out.println("Nombre: ");
+                String nombreCliente = escaner.nextLine();
+                System.out.println("Apellido: ");
+                String apellidoCliente = escaner.nextLine();
+
+            
+                String dniCliente = "";
+                boolean dniValido = false;
+                while (!dniValido) {
+                    System.out.println("Documento DNI (Debe tener 8 digitos) o presione '0' para regresar al menu: ");
+                    dniCliente = escaner.nextLine();
+
+                    if (dniCliente.equals("0")) {
+                        System.out.println("[!] Registro cancelado. Volviendo al menu...");
+                        break;
+                    }
+
+                    if (dniCliente.length() == 8 && dniCliente.matches("\\d+")) {
+                        dniValido = true;
+                    } else {
+                        System.out.println("[ERROR] El DNI ingresado no es valido (debe tener 8 digitos numericos). Intente nuevamente.");
+                    }
+                }
+
+                if (!dniValido) {
                     continue;
+                }
+
+                // Validación estricta del Número de Celular (Solo números y longitud exacta de 9)
+                String telefonoCliente = "";
+                boolean telefonoValido = false;
+                while (!telefonoValido) {
+                    System.out.println("Telefono / Celular (Debe tener exactamente 9 digitos numericos): ");
+                    telefonoCliente = escaner.nextLine();
+
+                    if (telefonoCliente.length() == 9 && telefonoCliente.matches("\\d+")) {
+                        telefonoValido = true;
+                    } else {
+                        System.out.println("[ERROR] El numero de celular debe tener exactamente 9 digitos y contener solo numeros.");
+                    }
                 }
 
                 String tiendaRecojo = seleccionarTienda(escaner);
@@ -102,9 +157,9 @@ public class Footloosee {
                     continue;
                 }
 
-                generarBoleta(datosCliente, productoSeleccionado, colorSeleccionado,
-                        tallaSeleccionada, cantidadPares, totalAPagar,
-                        metodoPagoTexto, tiendaRecojo);
+                generarBoleta(correoCliente, nombreCliente, apellidoCliente, dniCliente, telefonoCliente,
+                        productoSeleccionado, colorSeleccionado, tallaSeleccionada, cantidadPares,
+                        totalAPagar, metodoPagoTexto, tiendaRecojo);
 
                 irAlMenuPrincipal = false;
             }
@@ -326,9 +381,9 @@ public class Footloosee {
         double total = 0;
         switch (opcion) {
             case 1:
-                if (cantidad == 1) {
+                if (cantidad == 2) {
                     total = (167.90 * cantidad) * 0.70;
-                    System.out.println("[PROMO] Se aplicó un 30% de descuento por la comprar de 2 dos pares.");
+                    System.out.println("[PROMO] Se aplicó un 30% de descuento por la compra de 2 pares.");
                 } else total = 167.90 * cantidad;
                 break;
             case 2: total = 229.00 * cantidad; break;
@@ -341,9 +396,9 @@ public class Footloosee {
             case 9: total = 229.00 * cantidad; break;
             case 10: total = 239.00 * cantidad; break;
             case 11:
-                if (cantidad == 1) {
+                if (cantidad == 2) {
                     total = (135.90 * cantidad) * 0.80;
-                    System.out.println("[PROMO] Se aplicó un 20% de descuento por la comprar de 2 pares.");
+                    System.out.println("[PROMO] Se aplicó un 20% de descuento por la compra de 2 pares.");
                 } else total = 135.90 * cantidad;
                 break;
             case 12: total = 249.90 * cantidad; break;
@@ -365,9 +420,9 @@ public class Footloosee {
         double total = 0;
         switch (opcion) {
             case 1:
-                if (cantidad == 1) {
+                if (cantidad == 2) {
                     total = (167.90 * cantidad) * 0.70;
-                    System.out.println("[PROMO] Se aplicó un 30% de descuento por la comprar 2  pares.");
+                    System.out.println("[PROMO] Se aplicó un 30% de descuento por la compra de 2 pares.");
                 } else total = 167.90 * cantidad;
                 break;
             case 2: total = 229.00 * cantidad; break;
@@ -380,9 +435,9 @@ public class Footloosee {
             case 9: total = 229.00 * cantidad; break;
             case 10: total = 239.00 * cantidad; break;
             case 11:
-                if (cantidad == 1) {
+                if (cantidad == 2) {
                     total = (109.90 * cantidad) * 0.50;
-                    System.out.println("[PROMO] Se aplicó un 50% de descuento por la comprar de 2 pares.");
+                    System.out.println("[PROMO] Se aplicó un 50% de descuento por la compra de 2 pares.");
                 } else total = 109.90 * cantidad;
                 break;
             case 12: total = 139.90 * cantidad; break;
@@ -404,40 +459,6 @@ public class Footloosee {
         int cantidad = escaner.nextInt();
         escaner.nextLine();
         return cantidad;
-    }
-
-    public static String[] registrarDatosCliente(Scanner escaner) {
-        System.out.println("------------------------------------------");
-        System.out.println("       REGISTRO DE DATOS DE CLIENTE       ");
-        System.out.println("------------------------------------------");
-        System.out.println("Correo electronico: ");
-        String correo = escaner.nextLine();
-        System.out.println("Nombre: ");
-        String nombre = escaner.nextLine();
-        System.out.println("Apellido: ");
-        String apellido = escaner.nextLine();
-
-        String dni = "";
-        boolean dniValido = false;
-        while (!dniValido) {
-            System.out.println("Documento DNI (Debe tener 8 digitos) o presione '0' para regresar al menu: ");
-            dni = escaner.nextLine();
-
-            if (dni.equals("0")) {
-                System.out.println("[!] Registro cancelado. Volviendo al menu...");
-                return null;
-            }
-
-            if (dni.length() == 8) {
-                dniValido = true;
-            } else {
-                System.out.println("[ERROR] El DNI ingresado no es valido. Intente nuevamente.");
-            }
-        }
-
-        System.out.println("Telefono: ");
-        String telefono = escaner.nextLine();
-        return new String[]{correo, nombre, apellido, dni, telefono};
     }
 
     public static String seleccionarTienda(Scanner escaner) {
@@ -545,14 +566,9 @@ public class Footloosee {
         }
     }
 
-    public static void generarBoleta(String[] datosCliente, String producto, String color,
-                                     int talla, int cantidad, double total,
+    public static void generarBoleta(String correo, String nombre, String apellido, String dni, String telefono,
+                                     String producto, String color, int talla, int cantidad, double total,
                                      String metodoPago, String tienda) {
-        String correo   = datosCliente[0];
-        String nombre   = datosCliente[1];
-        String apellido = datosCliente[2];
-        String dni      = datosCliente[3];
-        String telefono = datosCliente[4];
 
         double igv = total * 0.18;
         double subtotal = total - igv;
@@ -562,7 +578,7 @@ public class Footloosee {
         System.out.println("          COMERCIAL FOOTLOOSE PERU S.A.C.         ");
         System.out.println("                RUC: 20511378491                  ");
         System.out.println("==================================================");
-        System.out.println("CLIENTE: " + nombre + " " + apellido);
+        System.out.println("CLIENTE: " + nombre.toUpperCase() + " " + apellido.toUpperCase());
         System.out.println("DNI: " + dni + "     TELEFONO: " + telefono);
         System.out.println("CORREO: " + correo);
         System.out.println("--------------------------------------------------");
