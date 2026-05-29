@@ -597,7 +597,7 @@ public class Footloosee {
                 System.out.println("Operación denegada por la pasarela bancaria");
 
                 if (!tarjetaOk) {
-                    System.out.println("El número de tarjeta debe contener exactly 16 dígitos");
+                    System.out.println("El número de tarjeta debe contener exactamente  16 dígitos");
                 }
                 if (!fechaEstructuraOk) {
                     System.out.println("Formato de fecha incorrecto");
