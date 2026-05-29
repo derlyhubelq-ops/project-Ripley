@@ -88,46 +88,30 @@ public class Footloosee {
 
                 System.out.println("Total a pagar: S/. " + totalAPagar);
 
-                
                 System.out.println("------------------------------------------");
-                System.out.println("       REGISTRO DE DATOS DE CLIENTE       ");
+                System.out.println("        REGISTRO DE DATOS DE CLIENTE       ");
                 System.out.println("------------------------------------------");
-                
-                String correoCliente = "";
-                boolean correoValido = false;
-                while (!correoValido) {
-                    System.out.println("Correo electronico (Debe contener '@' y '.com'): ");
-                    correoCliente = escaner.nextLine();
-                    boolean correoOk = correoCliente.contains("@") && correoCliente.contains(".com");
-
-                    if (correoOk) {
-                        correoValido = true;
-                    } else {
-                        System.out.println("[ERROR] Formato de correo invalido. Intente nuevamente.");
-                    }
-                }
 
                 System.out.println("Nombre: ");
                 String nombreCliente = escaner.nextLine();
                 System.out.println("Apellido: ");
                 String apellidoCliente = escaner.nextLine();
 
-            
                 String dniCliente = "";
                 boolean dniValido = false;
                 while (!dniValido) {
-                    System.out.println("Documento DNI (Debe tener 8 digitos) o presione '0' para regresar al menu: ");
+                    System.out.println("Documento DNI (Debe tener 8 caracteres) o presione '0' para regresar al menu: ");
                     dniCliente = escaner.nextLine();
 
                     if (dniCliente.equals("0")) {
-                        System.out.println("[!] Registro cancelado. Volviendo al menu...");
+                        System.out.println("Registro cancelado. Volviendo al menu...");
                         break;
                     }
 
-                    if (dniCliente.length() == 8 && dniCliente.matches("\\d+")) {
+                    if (dniCliente.length() == 8) {
                         dniValido = true;
                     } else {
-                        System.out.println("[ERROR] El DNI ingresado no es valido (debe tener 8 digitos numericos). Intente nuevamente.");
+                        System.out.println("[ERROR] El DNI ingresado no es valido (debe tener exactamente 8 caracteres). Intente nuevamente.");
                     }
                 }
 
@@ -138,25 +122,35 @@ public class Footloosee {
                 String telefonoCliente = "";
                 boolean telefonoValido = false;
                 while (!telefonoValido) {
-                    System.out.println("Telefono / Celular (Debe tener exactamente 9 digitos numericos): ");
+                    System.out.println("Telefono / Celular (Debe tener 9 caracteres) o presione '0' para regresar al menu: ");
                     telefonoCliente = escaner.nextLine();
 
-                    if (telefonoCliente.length() == 9 && telefonoCliente.matches("\\d+")) {
+                    if (telefonoCliente.equals("0")) {
+                        System.out.println("Registro cancelado. Volviendo al menu...");
+                        break;
+                    }
+
+                    if (telefonoCliente.length() == 9) {
                         telefonoValido = true;
                     } else {
-                        System.out.println("[ERROR] El numero de celular debe tener exactamente 9 digitos y contener solo numeros.");
+                        System.out.println("[ERROR] El numero de celular no es valido (debe tener exactamente 9 caracteres). Intente nuevamente.");
                     }
+                }
+
+                if (!telefonoValido) {
+                    continue;
                 }
 
                 String tiendaRecojo = seleccionarTienda(escaner);
 
-                String metodoPagoTexto = procesarFlujoPago(totalAPagar, escaner);
+                String[] correoContenedor = {"No requerido (Pago en Efectivo)"};
+                String metodoPagoTexto = procesarFlujoPago(totalAPagar, escaner, correoContenedor);
 
                 if (metodoPagoTexto.isEmpty()) {
                     continue;
                 }
 
-                generarBoleta(correoCliente, nombreCliente, apellidoCliente, dniCliente, telefonoCliente,
+                generarBoleta(correoContenedor[0], nombreCliente, apellidoCliente, dniCliente, telefonoCliente,
                         productoSeleccionado, colorSeleccionado, tallaSeleccionada, cantidadPares,
                         totalAPagar, metodoPagoTexto, tiendaRecojo);
 
@@ -168,7 +162,7 @@ public class Footloosee {
 
     public static void mostrarBienvenida() {
         System.out.println("==========================================");
-        System.out.println("         BIENVENIDO A FOOTLOOSE!          ");
+        System.out.println("             BIENVENIDO A FOOTLOOSE!          ");
         System.out.println("==========================================");
         System.out.println("1. Iniciar Sesion");
         System.out.println("2. Registrarse");
@@ -177,10 +171,11 @@ public class Footloosee {
         System.out.println("Seleccione una opcion: ");
     }
 
-    public static boolean procesarAcceso(int opcion, Scanner escaner) {
-        switch (opcion) {
+    public static boolean verificarAccesoUsuario(int opcionAcceso, Scanner escaner) {
+        switch (opcionAcceso) {
             case 1:
-                return iniciarSesion(escaner);
+                String usuario = loginUsuario(escaner);
+                return !usuario.isEmpty();
             case 3:
                 System.out.println("Entrando como Invitado...");
                 return true;
@@ -190,37 +185,80 @@ public class Footloosee {
         }
     }
 
-    public static boolean verificarAccesoUsuario(int opcionAcceso, Scanner escaner) {
-        return procesarAcceso(opcionAcceso, escaner);
-    }
+    public static String loginUsuario(Scanner escaner) {
+        String correoIn, passIn;
+        boolean ingresoExitoso = false;
+        String nombre = " Prueba ";
+        System.out.println(" -----INICIAR SESION------");
+        do {
+            System.out.println("Ingrese su correo ");
+            correoIn = escaner.nextLine();
+            System.out.println("Ingrese su contraseña");
+            passIn = escaner.nextLine();
+            boolean estructuraCorreoOk = correoIn.contains("@") && correoIn.endsWith(".com");
+            boolean structurePassOk = passIn.length() == 8;
 
-    public static boolean iniciarSesion(Scanner escaner) {
-        System.out.println("--- INICIAR SESION ---");
-        System.out.println("Ingrese correo: ");
-        String correo = escaner.nextLine();
-        System.out.println("Ingrese contrasena: ");
-        String pass = escaner.nextLine();
-        if (!correo.isEmpty() && !pass.isEmpty()) {
-            System.out.println("Inicio de sesion exitoso!");
-            return true;
-        } else {
-            System.out.println("Error: Credenciales incorrectas.");
-            return false;
-        }
+            if (!estructuraCorreoOk || !structurePassOk) {
+                System.out.println("Error, los datos no cumplen requisitos:");
+                if (!estructuraCorreoOk) {
+                    System.out.println(" El correo debe contener @ y terminar en .com ");
+                }
+                if (!structurePassOk) {
+                    System.out.println("La contraseña debe tener exactamente 8 caracteres.");
+                }
+            } else if (correoIn.equals("admin@gmail.com") && passIn.equals("12345678")) {
+                System.out.println("Ingreso exitoso a Footloose");
+                ingresoExitoso = true;
+                System.out.println("Bienvenido " + nombre);
+            } else {
+                System.out.println("Credenciales no válidas");
+            }
+
+            if (!ingresoExitoso) {
+                System.out.println("¿Desea cancelar el inicio de sesion (S/N)?");
+                String cancelar = escaner.nextLine();
+                if (cancelar.equalsIgnoreCase("S")) {
+                    nombre = "";
+                    break;
+                }
+            }
+        } while (!ingresoExitoso);
+        return nombre;
     }
 
     public static void registrarse(Scanner escaner) {
         System.out.println("--- REGISTRARSE ---");
-        System.out.println("Cree su correo de usuario: ");
-        String correo = escaner.nextLine();
-        System.out.println("Cree su contrasena: ");
-        String pass = escaner.nextLine();
+        String correo = "";
+        boolean correoValido = false;
+
+        while (!correoValido) {
+            System.out.println("Cree su correo de usuario (Debe contener '@' y terminar en '.com'): ");
+            correo = escaner.nextLine();
+            if (correo.contains("@") && correo.endsWith(".com")) {
+                correoValido = true;
+            } else {
+                System.out.println("[ERROR] El correo debe contener '@' y terminar en '.com'. Intente nuevamente.");
+            }
+        }
+
+        String pass = "";
+        boolean passValido = false;
+        while (!passValido) {
+            System.out.println("Cree su contrasena (Exactamente 8 caracteres): ");
+            pass = escaner.nextLine();
+            if (pass.length() == 8) {
+                passValido = true;
+            } else {
+                System.out.println("[ERROR] La contrasena debe tener exactamente 8 caracteres. Intente nuevamente.");
+            }
+        }
+
         System.out.println("Registro completado con exito! Ahora puede iniciar sesion.");
     }
 
     public static void mostrarMenuPrincipal() {
         System.out.println("==========================================");
-        System.out.println("              MENU PRINCIPAL               ");
+        System.out.println("                  MENU PRINCIPAL               ");
         System.out.println("==========================================");
         System.out.println("1. Seccion Varon");
         System.out.println("2. Seccion Mujer");
@@ -380,10 +418,12 @@ public class Footloosee {
         double total = 0;
         switch (opcion) {
             case 1:
-                if (cantidad == 2) {
-                    total = (167.90 * cantidad) * 0.70;
-                    System.out.println("[PROMO] Se aplicó un 30% de descuento por la compra de 2 pares.");
-                } else total = 167.90 * cantidad;
+                if (cantidad >= 2) {
+                    total = ((167.90 * 2) * 0.70) + (167.90 * (cantidad - 2));
+                    System.out.println("[PROMO] Se aplicó un 30% de descuento solo a los 2 primeros pares.");
+                } else {
+                    total = 167.90 * cantidad;
+                }
                 break;
             case 2: total = 229.00 * cantidad; break;
             case 3: total = 189.00 * cantidad; break;
@@ -395,10 +435,12 @@ public class Footloosee {
             case 9: total = 229.00 * cantidad; break;
             case 10: total = 239.00 * cantidad; break;
             case 11:
-                if (cantidad == 2) {
-                    total = (135.90 * cantidad) * 0.80;
-                    System.out.println("[PROMO] Se aplicó un 20% de descuento por la compra de 2 pares.");
-                } else total = 135.90 * cantidad;
+                if (cantidad >= 2) {
+                    total = ((135.90 * 2) * 0.80) + (135.90 * (cantidad - 2));
+                    System.out.println("[PROMO] Se aplicó un 20% de descuento solo a los 2 primeros pares.");
+                } else {
+                    total = 135.90 * cantidad;
+                }
                 break;
             case 12: total = 249.90 * cantidad; break;
             case 13: total = 249.90 * cantidad; break;
@@ -419,10 +461,12 @@ public class Footloosee {
         double total = 0;
         switch (opcion) {
             case 1:
-                if (cantidad == 2) {
-                    total = (167.90 * cantidad) * 0.70;
-                    System.out.println("[PROMO] Se aplicó un 30% de descuento por la compra de 2 pares.");
-                } else total = 167.90 * cantidad;
+                if (cantidad >= 2) {
+                    total = ((167.90 * 2) * 0.70) + (167.90 * (cantidad - 2));
+                    System.out.println("[PROMO] Se aplicó un 30% de descuento solo a los 2 primeros pares.");
+                } else {
+                    total = 167.90 * cantidad;
+                }
                 break;
             case 2: total = 229.00 * cantidad; break;
             case 3: total = 189.00 * cantidad; break;
@@ -434,10 +478,12 @@ public class Footloosee {
             case 9: total = 229.00 * cantidad; break;
             case 10: total = 239.00 * cantidad; break;
             case 11:
-                if (cantidad == 2) {
-                    total = (109.90 * cantidad) * 0.50;
-                    System.out.println("[PROMO] Se aplicó un 50% de descuento por la compra de 2 pares.");
-                } else total = 109.90 * cantidad;
+                if (cantidad >= 2) {
+                    total = ((109.90 * 2) * 0.50) + (109.90 * (cantidad - 2));
+                    System.out.println("[PROMO] Se aplicó un 50% de descuento solo a los 2 primeros pares.");
+                } else {
+                    total = 109.90 * cantidad;
+                }
                 break;
             case 12: total = 139.90 * cantidad; break;
             case 13: total = 99.90 * cantidad; break;
@@ -480,7 +526,7 @@ public class Footloosee {
         }
     }
 
-    public static String procesarFlujoPago(double total, Scanner escaner) {
+    public static String procesarFlujoPago(double total, Scanner escaner, String[] correoContenedor) {
         System.out.println("--- SELECCIONE METODO DE PAGO ---");
         System.out.println("1. Tarjeta de Credito");
         System.out.println("2. En Efectivo");
@@ -489,9 +535,8 @@ public class Footloosee {
         escaner.nextLine();
 
         if (metodo == 1) {
-            if (validaPagoTarjeta(escaner, total)) {
-                return "Tarjeta de Credito";
-            }
+            validaPagoTarjeta(escaner, total, correoContenedor);
+            return "Tarjeta de Credito";
         } else if (metodo == 2) {
             if (pagarEnEfectivo(total, escaner)) {
                 return "Efectivo";
@@ -502,49 +547,71 @@ public class Footloosee {
         return "";
     }
 
-    public static boolean validaPagoTarjeta(Scanner escaner, double total) {
-        System.out.println("--- PASARELA DE TARJETA ---");
-        System.out.println("Monto a procesar: S/. " + total);
+    public static void validaPagoTarjeta(Scanner escaner, double total, String[] correoContenedor) {
+        String nroTarjeta, fechaVencimiento, cvv, correoIn;
+        boolean pAprobado = false;
+        System.out.println("Monto total a pagar con tarjeta es: S/. " + total);
 
-        System.out.println("Ingrese el numero de tarjeta (16 digitos): ");
-        String nroTarjeta = escaner.nextLine();
-
-        System.out.println("Ingrese fecha de vencimiento (MM/yy): ");
-        String fechaVencimiento = escaner.nextLine();
-
-        System.out.println("Ingrese codigo de seguridad CVV (3 digitos): ");
-        String cvv = escaner.nextLine();
-
-        System.out.println("Ingrese nombre completo del titular: ");
-        String titular = escaner.nextLine();
-
-        boolean tarjetaOk = (nroTarjeta.length() == 16);
-        boolean cvvOk = (cvv.length() == 3);
-        boolean fechaEstructuraOk = (fechaVencimiento.length() == 5 && fechaVencimiento.contains("/"));
-        boolean fechaNoVencida = false;
-
-        if (fechaEstructuraOk) {
-            try {
-                DateTimeFormatter formateador = DateTimeFormatter.ofPattern("MM/yy");
-                YearMonth fechaTarjeta = YearMonth.parse(fechaVencimiento, formateador);
-                YearMonth fechaActual = YearMonth.now();
-
-                if (fechaTarjeta.isAfter(fechaActual) || fechaTarjeta.equals(fechaActual)) {
-                    fechaNoVencida = true;
-                }
-            } catch (DateTimeParseException e) {
-                System.out.println("[ERROR] Error en el formato de la fecha.");
+        boolean correoOk = false;
+        do {
+            System.out.println("Ingrese su correo electronico para el envio de la boleta (Debe contener '@' y terminar en '.com'):");
+            correoIn = escaner.nextLine();
+            if (correoIn.contains("@") && correoIn.endsWith(".com")) {
+                correoOk = true;
+                correoContenedor[0] = correoIn;
+            } else {
+                System.out.println("[ERROR] Formato incorrecto. El correo debe contener '@' y terminar en '.com'");
             }
-        }
+        } while (!correoOk);
 
-        if (tarjetaOk && cvvOk && fechaNoVencida) {
-            System.out.println("Procesando pago con tarjeta... ¡Autorizado exitosamente!");
-            return true;
-        } else {
-            System.out.println("[ERROR] Datos de tarjeta invalidos o tarjeta vencida.");
-            System.out.println("Cancelando transaccion y regresando al Menu Principal...");
-            return false;
-        }
+        do {
+            System.out.println("Ingrese los 16 digitos de la tarjeta");
+            nroTarjeta = escaner.nextLine();
+            System.out.println("Ingrese la fecha de caducidad (MM/AA) ");
+            fechaVencimiento = escaner.nextLine();
+            System.out.println("Ingrese el código de seguridad CVV");
+            cvv = escaner.nextLine();
+
+            boolean tarjetaOk = (nroTarjeta.length() == 16);
+            boolean cvvOk = (cvv.length() == 3);
+            boolean fechaEstructuraOk = (fechaVencimiento.length() == 5 && fechaVencimiento.contains("/"));
+            boolean fechaNoVencida = false;
+
+            if (fechaEstructuraOk) {
+                try {
+                    DateTimeFormatter formateador = DateTimeFormatter.ofPattern("MM/yy");
+                    YearMonth fechaTarjeta = YearMonth.parse(fechaVencimiento, formateador);
+                    YearMonth fechaActual = YearMonth.now();
+                    if (fechaTarjeta.isAfter(fechaActual) || fechaTarjeta.equals(fechaActual)) {
+                        fechaNoVencida = true;
+                    }
+                } catch (DateTimeParseException e) {
+                    fechaEstructuraOk = false;
+                }
+            }
+
+            if (tarjetaOk && fechaEstructuraOk && fechaNoVencida && cvvOk) {
+                System.out.println(" Autorizando fondos... transaccion exitosa");
+                pAprobado = true;
+            } else {
+                System.out.println("Operación denegada por la pasarela bancaria");
+
+                if (!tarjetaOk) {
+                    System.out.println("El número de tarjeta debe contener exactly 16 dígitos");
+                }
+                if (!fechaEstructuraOk) {
+                    System.out.println("Formato de fecha incorrecto");
+                }
+                if (fechaEstructuraOk && !fechaNoVencida) {
+                    System.out.println("Tarjeta caducada");
+                }
+                if (!cvvOk) {
+                    System.out.println("El CVV debe contener 3 dígitos");
+                }
+                System.out.println("Intente nuevamente el pago electrónico");
+            }
+
+        } while (!pAprobado);
     }
 
     public static boolean pagarEnEfectivo(double totalAPagar, Scanner escaner) {
@@ -569,15 +636,15 @@ public class Footloosee {
                                      String producto, String color, int talla, int cantidad, double total,
                                      String metodoPago, String tienda) {
 
-        double igv = total * 0.18;
-        double subtotal = total - igv;
+        double subtotal = total / 1.18;
+        double igv = total - subtotal;
 
         System.out.println("==================================================");
-        System.out.println("              BOLETA DE VENTA DIGITAL             ");
+        System.out.println("                BOLETA DE VENTA DIGITAL             ");
         System.out.println("          COMERCIAL FOOTLOOSE PERU S.A.C.         ");
         System.out.println("                RUC: 20511378491                  ");
         System.out.println("==================================================");
-        System.out.println("CLIENTE: " + nombre) + " " + apellido);
+        System.out.println("CLIENTE: " + nombre + " " + apellido);
         System.out.println("DNI: " + dni + "     TELEFONO: " + telefono);
         System.out.println("CORREO: " + correo);
         System.out.println("--------------------------------------------------");
@@ -589,8 +656,11 @@ public class Footloosee {
         System.out.println("Cantidad: " + cantidad + " pares");
         System.out.println("--------------------------------------------------");
         System.out.println("Subtotal: S/. " + subtotal);
-        System.out.println("IGV (18%): S/. " + igv);
+        System.out.println();
+        System.out.println("IGV (18%%): S/. " + igv);
+        System.out.println();
         System.out.println("TOTAL PAGADO: S/. " + total);
+        System.out.println();
         System.out.println("METODO DE PAGO: " + metodoPago);
         System.out.println("==================================================");
         System.out.println("      Gracias por tu compra en Footloose!        ");
