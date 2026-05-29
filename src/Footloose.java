@@ -135,7 +135,6 @@ public class Footloosee {
                     continue;
                 }
 
-                // Validación estricta del Número de Celular (Solo números y longitud exacta de 9)
                 String telefonoCliente = "";
                 boolean telefonoValido = false;
                 while (!telefonoValido) {
